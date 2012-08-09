@@ -34,7 +34,7 @@ def problem_meta_type_add(request):
         form = ProblemMetaTypeForm(request.POST)
         if form.is_valid():
             problem_meta_type = form.save()
-            return HttpResponseRedirect(reverse('meta_detail', kwargs={'problem_meta_type_id': problem_meta_type.id}))
+            #return HttpResponseRedirect(reverse('meta_detail', kwargs={'problem_meta_type_id': problem_meta_type.id}))
     else:
         form = ProblemMetaTypeForm()
         
