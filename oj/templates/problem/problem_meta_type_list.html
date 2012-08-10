@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+            {% block title %}
+                题目管理
+            {% endblock %}
+
+            {% block content %}
+            <div>
+                <a href="{% url problem_meta_add %}">添加题元</a>
+
+                <table>
+                    <tr>
+                        <td>编号</td>
+                        <td>标题</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% for meta_type in meta_types.object_list %}
+                    <tr>
+                        <td>{{ meta_type.id }}</td>
+                        <td><a href="{% url meta_detail meta_type.id %}">{{ meta_type.title }}</a></td>
+                        <td><a href="{% url meta_edit meta_type.id %}">编辑</a></td>
+                        <td><a href="{% url meta_delete meta_type.id %}">删除</a></td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+            {% endblock %}

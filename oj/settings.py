@@ -157,3 +157,5 @@ LOGGING = {
         },
     }
 }
+
+METAS_PER_PAGE = 20

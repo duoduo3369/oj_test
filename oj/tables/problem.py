@@ -79,9 +79,9 @@ from oj.models.problem import ProblemMetaType, ProblemMeta, Problem, ItemMetaTyp
 mapper(ProblemMetaType, problem_meta_type, properties={
     "problem_meta":relationship(ProblemMeta, backref="problem_meta_type"),
     "combines":relationship(ItemMetaType,
-                            primaryjoin= problem_meta_type.c.id==metaTypeCombine.c.problem_meta_type_id,
+                            #primaryjoin= problem_meta_type.c.id==metaTypeCombine.c.problem_meta_type_id,
                             secondary=metaTypeCombine, 
-                            secondaryjoin=item_meta_type.c.id==metaTypeCombine.c.item_meta_type_id,
+                            #secondaryjoin=item_meta_type.c.id==metaTypeCombine.c.item_meta_type_id,
                             backref="problem_meta_type",
                             ),
 })
@@ -89,18 +89,18 @@ mapper(ProblemMetaType, problem_meta_type, properties={
 mapper(ProblemMeta, problem_meta, properties={
     "problem":relationship(Problem, backref="problem_meta"),
     "combines":relationship(ItemMeta, 
-                            primaryjoin = problem_meta.c.id==metaCombine.c.problem_meta_id,
+                            #primaryjoin = problem_meta.c.id==metaCombine.c.problem_meta_id,
                             secondary=metaCombine, 
-                            secondaryjoin = item_meta.c.id==metaCombine.c.item_meta_id,
+                            #secondaryjoin = item_meta.c.id==metaCombine.c.item_meta_id,
                             backref="problem_meta"),
 })
 
 #mapper(Problem, problem)
 mapper(Problem, problem, properties={    
     "combines":relationship(Item, 
-                            primaryjoin= problem.c.id==problemItemCombine.c.problem_id,
+                            #primaryjoin= problem.c.id==problemItemCombine.c.problem_id,
                             secondary=problemItemCombine,   
-                            secondaryjoin=item.c.id==problemItemCombine.c.item_id,
+                            #secondaryjoin=item.c.id==problemItemCombine.c.item_id,
                             backref="problem"),
 })
 
@@ -110,7 +110,7 @@ mapper(ItemMetaType, item_meta_type, properties={
 })
 
 mapper(ItemMeta, item_meta, properties={
-    "item":relationship(Problem, backref="item_meta"),
+    "item":relationship(Item, backref="item_meta"),
 })
 
 mapper(Item, item)

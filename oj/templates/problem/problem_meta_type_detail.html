@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_type.id }} - {{ meta_type.title }}{% endblock %}
+{% block content %}
+
+            <div>
+                    <div>
+                   <h1>标题: {{ meta_type.title }}</h1>
+                    </div>
+                    
+                    <div>
+                       <a href="{% url problem_add meta_type.id %}">派生题目</a>
+                    </div>
+
+               <div>
+                    <h2>描述</h2>
+                    <a href="{% url description_add meta_type.id %}">Add</a>
+                    
+                    <table>
+                        <tr>
+                            <td>编号</td>
+                            <td>标题</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    
+                    </table>
+               </div>
+               
+               
+            </div>
+
+{% endblock %}
+
