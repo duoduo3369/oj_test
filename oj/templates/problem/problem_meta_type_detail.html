@@ -2,11 +2,32 @@
 {% block title %}{{ meta_type.id }} - {{ meta_type.title }}{% endblock %}
 {% block content %}
 
-            <div>
-                    <div>
-                   		<h1>标题: {{ meta_type.title }}</h1>
-                    </div>
-            </div>
+<div>
+	<div>
+		<h1>标题: {{ meta_type.title }}</h1>
+	</div>
+	<div>
+		<table>
+			<tr>
+				<td>编号</td>
+				<td>项元</td>
+				<td></td>
+				<td></td>
+			</tr>
+			{% for item_meta_type in item_meta_types %}
+			<tr>
+
+				{% for imt in item_meta_type %}
+				<td>{{ imt }}</td>
+				{% endfor %}
+				<td><a href="{% url item_meta_type_detail item_meta_type.0 %}">详情</a></td>
+
+			</tr>
+			{% endfor %}
+
+		</table>
+	</div>
+</div>
 
 {% endblock %}
 

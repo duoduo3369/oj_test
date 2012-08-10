@@ -12,21 +12,51 @@ def problem_index(request):
     
 from django.http import settings
 from forms import ProblemMetaTypeForm
-
-def problem_meta_type_list(request, page=1):
+def show_list(request,template,ItemClass, page=1):
     session = Session()
-    meta_types_all = session.query(ProblemMetaType).all()
+    objects_all = session.query(ItemClass).all()
     session.close()
     
-    paginator = Paginator(meta_types_all, settings.METAS_PER_PAGE)
+    paginator = Paginator(objects_all, settings.METAS_PER_PAGE)
     
     try:
-        meta_types = paginator.page(meta_types_all)
+        objects = paginator.page(objects_all)
     except (EmptyPage, InvalidPage):
-        meta_types = paginator.page(paginator.num_pages)
-    return render_to_response('problem/problem_meta_type_list.html', {"meta_types": meta_types},
+        objects = paginator.page(paginator.num_pages)
+    data = {"objects": objects}
+    return render_to_response(template, data,
                               context_instance=RequestContext(request))
-    
+
+#
+#def problem_meta_type_list(request, page=1):
+#    session = Session()
+#    meta_types_all = session.query(ProblemMetaType).all()
+#    session.close()
+#    
+#    paginator = Paginator(meta_types_all, settings.METAS_PER_PAGE)
+#    
+#    try:
+#        meta_types = paginator.page(meta_types_all)
+#    except (EmptyPage, InvalidPage):
+#        meta_types = paginator.page(paginator.num_pages)
+#    return render_to_response('problem/problem_meta_type_list.html', {"meta_types": meta_types},
+#                              context_instance=RequestContext(request))
+#
+#def item_meta_type_list(request, page=1):
+#    session = Session()
+#    meta_types_all = session.query(ItemMetaType).all()
+#    session.close()
+#    
+#    paginator = Paginator(meta_types_all, settings.METAS_PER_PAGE)
+#    
+#    try:
+#        meta_types = paginator.page(meta_types_all)
+#    except (EmptyPage, InvalidPage):
+#        meta_types = paginator.page(paginator.num_pages)
+#        data = {"meta_types": meta_types}
+#    return render_to_response('problem/item_meta_type_list.html', data,
+#                              context_instance=RequestContext(request))
+  
 def problem_meta_type_detail(request, problem_meta_type_id):
     session = Session()
     meta_type = session.query(ProblemMetaType).get(problem_meta_type_id)
@@ -34,6 +64,9 @@ def problem_meta_type_detail(request, problem_meta_type_id):
     if meta_type is None:
         raise Http404
     data = {"meta_type": meta_type,}
+    item_meta_types = meta_type.get_item_meta_types()    
+    data.update({'item_meta_types':item_meta_types})
+    
     session.close()
     
     return render_to_response('problem/problem_meta_type_detail.html', data,
@@ -68,20 +101,6 @@ def item_meta_type_add(request):
     data = {'form': form}
     return render_to_response("problem/item_meta_type_add.html", data, context_instance=RequestContext(request)) 
 
-def item_meta_type_list(request, page=1):
-    session = Session()
-    meta_types_all = session.query(ItemMetaType).all()
-    session.close()
-    
-    paginator = Paginator(meta_types_all, settings.METAS_PER_PAGE)
-    
-    try:
-        meta_types = paginator.page(meta_types_all)
-    except (EmptyPage, InvalidPage):
-        meta_types = paginator.page(paginator.num_pages)
-        data = {"meta_types": meta_types}
-    return render_to_response('problem/item_meta_type_list.html', data,
-                              context_instance=RequestContext(request))
     
 def item_meta_type_detail(request, item_meta_type_id):
     session = Session()

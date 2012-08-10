@@ -3,7 +3,7 @@ from django import forms
 #    Item
 from oj.sa_conn import Session
 #from oj.models.problem import ProblemMetaType
-from oj.tables.problem import ProblemMetaType,ItemMetaType
+from oj.tables.problem import ProblemMetaType,ItemMetaType,ItemMeta
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 
@@ -16,7 +16,7 @@ class ItemMetaTypeForm(forms.Form):
     class Meta:
         model = ItemMetaType
 
-    def save(self, commit=True, update=False, item_meta_type_id=0):
+    def save(self, commit=True, update=False, item_meta_type_id=None):
         session = Session()
         
         if update:
@@ -34,8 +34,35 @@ class ItemMetaTypeForm(forms.Form):
         session.close()
         
         return item_meta_type
-    
-    
+
+class ItemMetaForm(forms.Form):
+    title = forms.CharField(label=_('title'), max_length = 254)
+
+    def __init__(self, *args, **kwargs):
+        super(ItemMetaForm, self).__init__(*args, **kwargs)
+        
+    class Meta:
+        model = ItemMeta
+
+    def save(self, commit=True, update=False, item_meta_type_id=None,item_meta_id=None):
+        session = Session()
+        
+        if update:
+            item_meta = session.query(ItemMeta).get(item_meta_id)
+        else:
+            item_meta = ItemMeta()
+
+        item_meta.title = self.cleaned_data['title']
+        item_meta.item_meta_type_id = item_meta_type_id
+        
+        if not update:
+            session.add(item_meta)
+        session.commit()        
+        item_meta.id = item_meta.id
+        session.close()
+        
+        return item_meta
+
 from oj.constant import MARK_SEPARATOR
         
 class ProblemMetaTypeForm(forms.Form):
@@ -54,7 +81,7 @@ class ProblemMetaTypeForm(forms.Form):
     class Meta:
         model = ProblemMetaType
 
-    def save(self, commit=True, update=False, problem_meta_type_id=0):
+    def save(self, commit=True, update=False, problem_meta_type_id=None):
         session = Session()
         
         if update:

@@ -5,7 +5,7 @@
 
             {% block content %}
             <div>
-                <a href="{% url problem_meta_type_add %}">添加题元</a>
+                <a href="{% url problem_meta_type_add %}">添加题元类型</a>
 
                 <table>
                     <tr>
@@ -14,10 +14,10 @@
                         <td></td>
                         <td></td>
                     </tr>
-                {% for meta_type in meta_types.object_list %}
+                {% for object in objects.object_list %}
                     <tr>
-                        <td>{{ meta_type.id }}</td>
-                        <td><a href="{% url problem_meta_type_detail meta_type.id %}">{{ meta_type.title }}</a></td>
+                        <td>{{ object.id }}</td>
+                        <td><a href="{% url problem_meta_type_detail object.id %}">{{ object.title }}</a></td>
                         
                         
                     </tr>
