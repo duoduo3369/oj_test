@@ -10,6 +10,7 @@ from oj.sa_conn import metadata
 problem_meta_type = Table("ProblemMetaType", metadata,
                      Column("id", Integer, primary_key=True),
                      Column("title", String(200), nullable=False, default=""),
+                     Column("item_meta_types", String(200), nullable=False, default=""),
                      extend_existing=True,
                )
 
