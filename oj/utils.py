@@ -5,6 +5,9 @@ Created on 2012-8-10
 '''
 from oj.constant import MARK_SEPARATOR
 def get_string_with_mark_separator(input_string,item_tuple , mark_sp = MARK_SEPARATOR):
+    """
+        item_tuple = [(),(),()]
+    """
     input_string = str(input_string)
 
     id_strs = input_string.split(MARK_SEPARATOR)

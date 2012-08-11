@@ -3,9 +3,9 @@ from django import forms
 #    Item
 from oj.sa_conn import Session
 #from oj.models.problem import ProblemMetaType
-from oj.tables.problem import ProblemMetaType,ItemMetaType,ItemMeta
+from oj.tables.problem import ProblemMetaType,ProblemMeta,ItemMetaType,ItemMeta
 from django.utils.translation import ugettext, ugettext_lazy as _
-
+from django.http import Http404
 
 class ItemMetaTypeForm(forms.Form):
     title = forms.CharField(label=_('title'), max_length = 254)
@@ -52,7 +52,7 @@ class ItemMetaForm(forms.Form):
         else:
             item_meta = ItemMeta()
 
-        item_meta.title = self.cleaned_data['title']
+        item_meta.title = self.cleaned_data['title']        
         item_meta.item_meta_type_id = item_meta_type_id
         
         if not update:
@@ -63,7 +63,7 @@ class ItemMetaForm(forms.Form):
         
         return item_meta
 
-from oj.constant import MARK_SEPARATOR
+from oj.constant import MARK_SEPARATOR,MARK_SEPARATOR_ITEM_META
         
 class ProblemMetaTypeForm(forms.Form):
     title = forms.CharField(label=_('title'), max_length = 254)
@@ -105,5 +105,48 @@ class ProblemMetaTypeForm(forms.Form):
         
         return problem_meta_type
 
+class ProblemMetaForm(forms.Form):
+    title = forms.CharField(label=_('title'), max_length = 254)
+    #item_metas = forms.MultipleChoiceField(label=_('item_metas'), choices=())
+    
+    def __init__(self, *args, **kwargs):
+        super(ProblemMetaForm, self).__init__(*args, **kwargs)
 
+        data_list = kwargs["initial"]["data_list"]
+        for data in data_list:
+            field_name = data.field_name 
+            self.fields[field_name] = forms.MultipleChoiceField(label=_(field_name), choices=([(i.id, i.title) for i in data.item_meta_object]))
+
+        
+    class Meta:
+        model = ProblemMeta
+
+    def save(self, commit=True, update=False, problem_meta_type_id=None,problem_meta_id=None,data_list=None):
+        session = Session()
+        
+        if update:
+            problem_meta = session.query(ProblemMeta).get(problem_meta_id)
+        else:
+            problem_meta = ProblemMeta()
+
+        problem_meta.title = self.cleaned_data['title']
+        problem_meta.problem_meta_type_id = problem_meta_type_id
+        
+        item_meta_list = ""
+        for data in data_list:
+            field_name = data.field_name
+            iml = MARK_SEPARATOR + str(data.type_id)
+            for item_meta in self.cleaned_data[field_name]:
+                iml += MARK_SEPARATOR_ITEM_META + item_meta
+            item_meta_list += iml
+        problem_meta.item_metas = item_meta_list
+        session.expire_on_commit = False
+        
+        if not update:
+            session.add(problem_meta)
+        session.commit()        
+        problem_meta.id = problem_meta.id
+        session.close()
+        
+        return problem_meta
 

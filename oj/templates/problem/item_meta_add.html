@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_type.id }} - {{ meta_type.title }}{% endblock %}
+{% block content %}
+
+<div>
+	<div>
+		<h1>标题: {{ meta_type.title }}</h1>
+	</div>
+	<div style="width:800px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
+		<form id="form" name="submit" action="" method="POST">
+			{% csrf_token%}
+			<table>
+				<tbody>
+					<tr>
+						<td>标题：</td>
+						<td> {{ form.title }} </td>
+					</tr>
+
+				</tbody>
+			</table>
+			<br>
+			<input style="float:left" class="bnt1" type="submit" id="submit" value="提交">
+			<input style="margin-left:20px;float:left" class="bnt1" type="button" value="返回" onclick="history.go(-1)">
+		</form>
+
+	</div>
+
+	{% endblock %}
+
