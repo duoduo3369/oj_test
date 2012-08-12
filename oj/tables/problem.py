@@ -144,3 +144,11 @@ def get_item_metas(self):
     session.close()
     return get_string_with_mark_separator(self.item_metas,item_metas)
 ProblemMeta.get_item_metas = get_item_metas
+
+def get_items(self):
+    session = Session()
+    item_meta_objects = session.query(ItemMeta).all()
+    item_metas = [(imt.id,imt.item_meta_type_id,imt.title) for imt in item_meta_objects]
+    session.close()
+    return get_string_with_mark_separator(self.items,item_metas)
+Problem.get_items = get_items

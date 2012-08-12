@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ problem.id }} - {{ problem.title }}{% endblock %}
+{% block content %}
+
+<div>
+	<div>
+		<h1>题目: {{ problem.title }}</h1>
+		<a href="{% url problem_meta_detail problem.problem_meta_id%}">返回所属题元</a>
+
+	</div>
+	<div>
+		<table>
+			<tr>
+				<td>项元编号</td>
+				<td>项元类型编号</td>
+				<td>题目项</td>
+				<td></td>
+			</tr>
+			{% for item in items %}
+			<tr>
+
+				{% for i in item %}
+				<td>{{ i }}</td>
+				{% endfor %}
+
+			</tr>
+			{% endfor %}
+
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+

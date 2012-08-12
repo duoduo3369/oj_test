@@ -3,10 +3,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.http import Http404
-from oj.models.problem import ProblemMetaType , ProblemMeta , ItemMetaType, ItemMeta
+from oj.models.problem import ProblemMetaType , ProblemMeta , Problem, ItemMetaType, ItemMeta
 from oj.sa_conn import Session
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from forms import ProblemMetaTypeForm, ProblemMetaForm,ProblemForm, ItemMetaForm, ItemMetaTypeForm
+from forms import ProblemMetaTypeForm, ProblemMetaForm, ProblemForm, ItemMetaForm, ItemMetaTypeForm
 from oj.constant import MARK_SEPARATOR
 
 def problem_index(request):
@@ -29,9 +29,9 @@ def show_list(request, template, ItemClass, page=1):
     return render_to_response(template, data,
                               context_instance=RequestContext(request))
 
-def problem_meta_list(request,problem_meta_type_id, page=1):
+def problem_meta_list(request, problem_meta_type_id, page=1):
     session = Session()
-    objects_all = session.query(ProblemMeta).filter(ProblemMeta.problem_meta_type_id==problem_meta_type_id)
+    objects_all = session.query(ProblemMeta).filter(ProblemMeta.problem_meta_type_id == problem_meta_type_id)
     meta_type = session.query(ProblemMetaType).get(problem_meta_type_id)
 
     session.close()
@@ -42,7 +42,7 @@ def problem_meta_list(request,problem_meta_type_id, page=1):
         objects = paginator.page(objects_all)
     except (EmptyPage, InvalidPage):
         objects = paginator.page(paginator.num_pages)
-    data = {"objects": objects,"meta_type":meta_type}
+    data = {"objects": objects, "meta_type":meta_type}
     return render_to_response('problem/problem_meta_list.html', data,
                               context_instance=RequestContext(request))
 
@@ -95,10 +95,10 @@ def problem_meta_add(request, problem_meta_type_id):
             session.close()
             raise Http404
         field_name = imt[1]
-        choice = [(i.id,i.title) for i in item_meta_object]
-        d = ProblemMetaMultipleChoiceFormItem(item_meta_type_id = item_meta_type_id,
-                                              field_name = field_name,
-                                              choice = choice,
+        choice = [(i.id, i.title) for i in item_meta_object]
+        d = ProblemMetaMultipleChoiceFormItem(item_meta_type_id=item_meta_type_id,
+                                              field_name=field_name,
+                                              choice=choice,
                                              )
         data_list.append(d)
             
@@ -110,7 +110,7 @@ def problem_meta_add(request, problem_meta_type_id):
         
         if form.is_valid():
             problem_meta = form.save(problem_meta_type_id=problem_meta_type_id, data_list=data_list)
-            data = {'problem_meta_type_id':problem_meta_type_id,"page":1}
+            data = {'problem_meta_type_id':problem_meta_type_id, "page":1}
         
             return HttpResponseRedirect(reverse('problem_meta_list', kwargs=data))
 
@@ -140,6 +140,37 @@ def problem_meta_detail(request, problem_meta_id):
     return render_to_response('problem/problem_meta_detail.html', data,
                              context_instance=RequestContext(request))
 
+def problem_list(request, problem_meta_id, page=1):
+    session = Session()
+    objects_all = session.query(Problem).filter(Problem.problem_meta_id == problem_meta_id)
+    meta = session.query(ProblemMeta).get(problem_meta_id)
+
+    session.close()
+    
+    paginator = Paginator(objects_all, settings.METAS_PER_PAGE)
+    
+    try:
+        objects = paginator.page(objects_all)
+    except (EmptyPage, InvalidPage):
+        objects = paginator.page(paginator.num_pages)
+    data = {"objects": objects, "meta":meta}
+    return render_to_response('problem/problem_list.html', data,
+                              context_instance=RequestContext(request))
+
+def problem_detail(request, problem_id):
+    session = Session()
+    problem = session.query(Problem).get(problem_id)
+    
+    if problem is None:
+        raise Http404
+    data = {"problem": problem, }
+    items = problem.get_items()    
+    data.update({'items':items})
+       
+    session.close()
+    
+    return render_to_response('problem/problem_detail.html', data,
+                             context_instance=RequestContext(request))
 
 def problem_add(request, problem_meta_id):
     session = Session()
@@ -163,10 +194,10 @@ def problem_add(request, problem_meta_id):
         choice = []
         for im in item_metas:
             if imt[0] == im[1]:
-                choice.append((im[0],im[2]))
-        d = ProblemMetaMultipleChoiceFormItem(item_meta_type_id = imt[0],
-                                              field_name = imt[1],
-                                              choice = choice,
+                choice.append((im[0], im[2]))
+        d = ProblemMetaMultipleChoiceFormItem(item_meta_type_id=imt[0],
+                                              field_name=imt[1],
+                                              choice=choice,
                                              )
         data_list.append(d)
     
@@ -180,9 +211,9 @@ def problem_add(request, problem_meta_id):
         
         if form.is_valid():
             problem_meta = form.save(problem_meta_id=problem_meta_id, data_list=data_list)
-            #data = {'problem_meta_type_id':problem_meta_type_id,"page":1}
+            data = {'problem_meta_id':problem_meta_id,"page":1}
         
-            #return HttpResponseRedirect(reverse('problem_meta_list', kwargs=data))
+            return HttpResponseRedirect(reverse('problem_list', kwargs=data))
 
     else:
         form = ProblemForm(initial={"problem_meta_id":problem_meta_id,
