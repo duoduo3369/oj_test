@@ -134,3 +134,13 @@ def get_item_meta_types(self):
     return get_string_with_mark_separator(self.item_meta_types,item_meta_types)
 
 ProblemMetaType.get_item_meta_types = get_item_meta_types
+
+
+
+def get_item_metas(self):
+    session = Session()
+    item_meta_objects = session.query(ItemMeta).all()
+    item_metas = [(imt.id,imt.item_meta_type_id,imt.title) for imt in item_meta_objects]
+    session.close()
+    return get_string_with_mark_separator(self.item_metas,item_metas)
+ProblemMeta.get_item_metas = get_item_metas

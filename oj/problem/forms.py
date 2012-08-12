@@ -3,7 +3,7 @@ from django import forms
 #    Item
 from oj.sa_conn import Session
 #from oj.models.problem import ProblemMetaType
-from oj.tables.problem import ProblemMetaType,ProblemMeta,ItemMetaType,ItemMeta
+from oj.tables.problem import ProblemMetaType,ProblemMeta,Problem,ItemMetaType,ItemMeta
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.http import Http404
 
@@ -107,7 +107,6 @@ class ProblemMetaTypeForm(forms.Form):
 
 class ProblemMetaForm(forms.Form):
     title = forms.CharField(label=_('title'), max_length = 254)
-    #item_metas = forms.MultipleChoiceField(label=_('item_metas'), choices=())
     
     def __init__(self, *args, **kwargs):
         super(ProblemMetaForm, self).__init__(*args, **kwargs)
@@ -115,7 +114,7 @@ class ProblemMetaForm(forms.Form):
         data_list = kwargs["initial"]["data_list"]
         for data in data_list:
             field_name = data.field_name 
-            self.fields[field_name] = forms.MultipleChoiceField(label=_(field_name), choices=([(i.id, i.title) for i in data.item_meta_object]))
+            self.fields[field_name] = forms.MultipleChoiceField(label=_(field_name), choices=(data.choice))
 
         
     class Meta:
@@ -135,9 +134,9 @@ class ProblemMetaForm(forms.Form):
         item_meta_list = ""
         for data in data_list:
             field_name = data.field_name
-            iml = MARK_SEPARATOR + str(data.type_id)
+            iml = ""
             for item_meta in self.cleaned_data[field_name]:
-                iml += MARK_SEPARATOR_ITEM_META + item_meta
+                iml += MARK_SEPARATOR + item_meta
             item_meta_list += iml
         problem_meta.item_metas = item_meta_list
         session.expire_on_commit = False
@@ -150,3 +149,46 @@ class ProblemMetaForm(forms.Form):
         
         return problem_meta
 
+class ProblemForm(forms.Form):
+    title = forms.CharField(label=_('title'), max_length = 254)
+    
+    def __init__(self, *args, **kwargs):
+        super(ProblemForm, self).__init__(*args, **kwargs)
+
+        data_list = kwargs["initial"]["data_list"]
+        for data in data_list:
+            field_name = data.field_name 
+            self.fields[field_name] = forms.MultipleChoiceField(label=_(field_name), choices=(data.choice))
+
+        
+    class Meta:
+        model = ProblemMeta
+
+    def save(self, commit=True, update=False,problem_meta_id=None,problem_id=None,data_list=None):
+        session = Session()
+        
+        if update:
+            problem = session.query(Problem).get(problem_id)
+        else:
+            problem = Problem()
+
+        problem.title = self.cleaned_data['title']
+        problem.problem_meta_id = problem_meta_id
+        
+        item_meta_list = ""
+        for data in data_list:
+            field_name = data.field_name
+            iml = ""
+            for item_meta in self.cleaned_data[field_name]:
+                iml += MARK_SEPARATOR + item_meta
+            item_meta_list += iml
+        problem.items = item_meta_list
+        session.expire_on_commit = False
+        
+        if not update:
+            session.add(problem)
+        session.commit()        
+        problem.id = problem.id
+        session.close()
+        
+        return problem

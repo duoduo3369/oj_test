@@ -4,7 +4,10 @@
 
 <div>
 	<div>
-		<h1>标题: {{ meta_type.title }}</h1>
+		<h1>题元类型: {{ meta_type.title }}</h1>
+		<a href="{% url problem_meta_add meta_type.id %}">派生题元</a>
+		<a href="{% url problem_meta_list problem_meta_type_id meta_type.id %}">本题元列表</a>
+		<a href="{% url problem_meta_type_list 1 %}">返回题元类型列表</a>
 	</div>
 	<div>
 		<table>
@@ -20,7 +23,6 @@
 				{% for imt in item_meta_type %}
 				<td>{{ imt }}</td>
 				{% endfor %}
-				<td><a href="{% url item_meta_type_detail item_meta_type.0 %}">详情</a></td>
 
 			</tr>
 			{% endfor %}

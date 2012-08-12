@@ -46,9 +46,9 @@ class Item(object):
     #[ 0:type_id  1:field_name, 2:item_meta_type_object 3:item_meta_object
 class ProblemMetaMultipleChoiceFormItem(object):
     
-    def __init__(self,type_id=None,field_name=None,item_meta_type_object=None,item_meta_object=None):
-        self.type_id = type_id
+    def __init__(self,item_meta_type_id=None,field_name=None,choice=None,item_meta_object=None):
+        self.item_meta_type_id = item_meta_type_id
         self.field_name = field_name
-        self.item_meta_type_object = item_meta_type_object
+        self.choice = choice
         self.item_meta_object = item_meta_object
         

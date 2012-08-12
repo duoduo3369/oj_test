@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}添加题目{% endblock %}
+{% block metas %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+<script>
+	$(function() {
+		$('<span>title</span>').insertBefore('input[name=title]');
+
+		$('select').each(function() {
+			var oldHref = $(this).attr('name');
+			$(this).before('<p>' + oldHref + '</p>');
+		});
+	}); 
+</script>
+{% endblock %}
+{% block content %}
+
+<div style="width:800px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
+	<form id="form" name="submit" action="" method="POST">
+		{% csrf_token%}
+		<div>
+
+			{% for f in form %}
+			<div>
+				{{ f }}
+			</div>
+			{% endfor %}
+
+		</div>
+		<br>
+		<input style="float:left" class="bnt1" type="submit" id="submit" value="提交">
+		<input style="margin-left:20px;float:left" class="bnt1" type="button" value="返回" onclick="history.go(-1)">
+	</form>
+
+</div>
+
+{% endblock %}
