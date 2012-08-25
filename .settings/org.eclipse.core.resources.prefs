@@ -1,3 +1,6 @@
 eclipse.preferences.version=1
 encoding//oj/constant.py=utf8
-encoding//oj/tables/problem.py=UTF8
+encoding//oj/description/forms.py=UTF8
+encoding//oj/description/views.py=UTF8
+encoding//oj/description/widgets.py=UTF8
+encoding//oj/models/description.py=UTF8

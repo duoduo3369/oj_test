@@ -15,6 +15,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'oj.views.index', name='index'),
-    url(r'^problem/', include('oj.problem.urls')),
+    url(r'^description/', include('oj.description.urls')),
 
 )

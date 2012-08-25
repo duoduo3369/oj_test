@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}元描述：{{ description_meta_object.id }} - {{ description_meta_object.title }}所拥有的全部组合{% endblock %}
+{% block content %}
+
+<div>
+	<div>
+		<h2><a href="{% url description_meta_list 1%}">元描述</a>: {{ description_meta_object.title }}</h2>
+		<div>
+			<a href="{% url description_type_list description_meta_object.id 1%}">已有的描述类型</a>
+			<a href="{% url description_type_add description_meta_object.id%}">派生描述类型</a>
+		</div>
+		<h3>元描述所拥有的全部组合</h3>
+	</div>
+
+	<div>
+
+		<table>
+			<tr>
+				<td>编号</td>
+				<td>组合</td>
+
+			</tr>
+			{% for object in detail_list %}
+			<tr>
+				<td>{{ object.item_relation_id }}</td>
+				<td><a href="{% url item_relation_detail object.item_relation_id%}">{{ object.item_relation_title }}</a></td>
+
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+</div>
+
+{% endblock %}
+
