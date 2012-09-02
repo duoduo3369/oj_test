@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 
-    {% block title %}山东科技大学 在线测评系统{% endblock %}
+{% block title %}山东科技大学 在线测评系统{% endblock %}
 
-    {% block content %}
-        <div style="width:900px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
-            <p>
-                欢迎使用山东科技大学 在线测评系统！
-            </p>
-            <div>
+{% block content %}
+<div style="width:900px;MARGIN-RIGHT:auto;MARGIN-LEFT:auto;">
+	<p>
+		欢迎使用山东科技大学 在线测评系统！
+	</p>
+	<div>
+		<a href="{% url item_list 1%}">项元列表</a>
+		<a href="{% url item_relation_list 1%}">组合列表</a>
+		<a href="{% url description_meta_list 1%}">元描述列表</a>
 
-            </div>
-            <br>
-            <b>Change Log:</b>
-            <div id="disqus_thread"></div>
-        </div>
-    {% endblock %}
+		<a href="{% url description_add %}">增加描述</a>
+
+	</div>
+	<br>
+	<b>Change Log:</b>
+	<div id="disqus_thread"></div>
+</div>
+{% endblock %}
